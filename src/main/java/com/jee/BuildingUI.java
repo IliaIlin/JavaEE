@@ -1,7 +1,5 @@
 package com.jee;
 
-import com.jee.Building;
-import com.jee.BuildingIO;
 import com.jee.dto.FloorDTO;
 import com.jee.exceptions.GeneralInputException;
 import com.jee.exceptions.NegativeInputNumberException;
@@ -20,8 +18,8 @@ public class BuildingUI {
     static Building[] buildings;
     static OfficeBuilding[] officeBuildings;
     static DwellingBuilding[] dwellingBuildings;
-    static final String INPUT_FILE_PATH = "src/lab3/inputFiles/";
-    static final String OUTPUT_FILE_PATH = "src/lab3/outputFiles/";
+    static final String INPUT_FILE_PATH = "src/main/resources/inputFiles/";
+    static final String OUTPUT_FILE_PATH = "src/main/resources/outputFiles/";
 
     public static void main(String[] args) {
         inputUserChoice();
