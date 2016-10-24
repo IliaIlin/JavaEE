@@ -1,0 +1,6 @@
+5
+Rock    3   1 2 3 office
+Rock2   3   3 2 1 office
+Plaza1  5   1 4 4 4 1  dwelling
+Plaza1 5  1 4 4 4 1  dwelling
+Plaza2  7   1 2 3 3 3 3 1  dwelling

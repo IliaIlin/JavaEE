@@ -1,0 +1,1 @@
+testDwellingBuilding 10 1 20 20 20 20 20 20 20 20 10 dwelling 
