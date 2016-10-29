@@ -66,7 +66,7 @@ public class BuildingIO {
         }
     }
 
-    public static Building readBuilding(Scanner in) throws GeneralInputException {
+    public static Building readBuilding(Scanner in) {
         System.out.println("Enter name of building: ");
         String nameOfBuilding = in.next();
         System.out.println("Enter number of floors: ");
@@ -90,6 +90,7 @@ public class BuildingIO {
 
     public static void printFloorDTOListToFile(List<FloorDTO> floors, Writer out) {
         Formatter formatter = new Formatter(out);
+        formatter.format("%d %n", floors.size());
         floors.stream().forEach((floor) ->
                 formatter.format("%s %d %n", floor.getNameOfBuilding(), floor.getNumberOfRoomsOnFloor()));
     }

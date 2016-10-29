@@ -1,36 +1,42 @@
 package com.jee;
 
+import com.jee.dto.FloorDTO;
 import com.jee.impl.DwellingBuilding;
 import com.jee.impl.OfficeBuilding;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class BuildingIOTest {
 
-    Building testOfficeBuilding, testDwellingBuilding;
+    private static Building testOfficeBuilding, testDwellingBuilding;
 
-    FileInputStream fileInputStream;
-    FileOutputStream fileOutputStream;
-    FileReader fileReader;
-    Scanner scanner;
+    private FileInputStream fileInputStream;
+    private FileOutputStream fileOutputStream;
+    private FileReader fileReader;
+    private Scanner scanner;
 
-    final String TEST_FILE_PATH = "src/test/resources/test.txt";
+    private final String TEST_FILE_PATH = "src/test/resources/test.txt";
 
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUp() throws Exception {
         testOfficeBuilding = new OfficeBuilding(17, new int[]{
                 2, 3, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 2}, "testOfficeBuilding");
         testDwellingBuilding = new DwellingBuilding(10, new int[]{
                 1, 20, 20, 20, 20, 20, 20, 20, 20, 10}, "testDwellingBuilding");
+    }
+
+    @Before
+    public void setUpStreams() throws FileNotFoundException {
         fileInputStream = new FileInputStream(TEST_FILE_PATH);
         fileOutputStream = new FileOutputStream(TEST_FILE_PATH);
         fileReader = new FileReader(TEST_FILE_PATH);
@@ -69,7 +75,6 @@ public class BuildingIOTest {
         assertEquals(testDwellingBuilding, building);
     }
 
-
     @Test
     public void testOverloadedReadOfficeBuilding() throws Exception {
         try (FileWriter fileWriter = new FileWriter(TEST_FILE_PATH)) {
@@ -88,13 +93,23 @@ public class BuildingIOTest {
         assertEquals(testDwellingBuilding, building);
     }
 
-
     @Test
     @Ignore
     public void testPrintFloorDTOListToFile() throws Exception {
+        List<FloorDTO> listToWrite = testOfficeBuilding.getAllFloors();
         try (FileWriter fileWriter = new FileWriter(TEST_FILE_PATH)) {
-            BuildingIO.printFloorDTOListToFile(testOfficeBuilding.getAllFloors(), fileWriter);
+            BuildingIO.printFloorDTOListToFile(listToWrite, fileWriter);
         }
+        scanner.close();
+        scanner = new Scanner(fileReader);
+        int listSize = scanner.nextInt();
+        List<FloorDTO> listToRead = new ArrayList<>();
+        for (int i = 0; i < listSize; i++) {
+            String nameOfBuilding = scanner.next();
+            int numberOfFloors = scanner.nextInt();
+            listToRead.add(new FloorDTO(numberOfFloors, nameOfBuilding));
+        }
+        assertTrue(listToWrite.equals(listToRead));
     }
 
     @Test

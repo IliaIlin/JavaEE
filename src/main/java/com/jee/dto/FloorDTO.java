@@ -28,4 +28,17 @@ public class FloorDTO implements Serializable {
                 append(numberOfRoomsOnFloor).
                 toString();
     }
+
+    @Override
+    public boolean equals(Object object) {
+        if (object != null && object instanceof FloorDTO) {
+            FloorDTO floor = (FloorDTO) object;
+            if (this.getNameOfBuilding().equals(floor.getNameOfBuilding()) &&
+                    this.getNumberOfRoomsOnFloor() == floor.getNumberOfRoomsOnFloor()) {
+                return true;
+            }
+            return false;
+        }
+        return false;
+    }
 }

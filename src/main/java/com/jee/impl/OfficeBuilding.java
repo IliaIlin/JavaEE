@@ -57,12 +57,14 @@ public class OfficeBuilding implements Building, Serializable, Cloneable {
     }
 
     public FloorDTO findFloorWithMaxRooms() {
-        int maxIndex = Arrays.stream(numberOfOfficesOnFloor).max().getAsInt();
+        int maxValue = Arrays.stream(numberOfOfficesOnFloor).max().getAsInt();
+        int maxIndex = Arrays.binarySearch(numberOfOfficesOnFloor, maxValue);
         return new FloorDTO(numberOfOfficesOnFloor[maxIndex], nameOfBuilding);
     }
 
     public FloorDTO findFloorWithMinRooms() {
-        int minIndex = Arrays.stream(numberOfOfficesOnFloor).min().getAsInt();
+        int minValue = Arrays.stream(numberOfOfficesOnFloor).min().getAsInt();
+        int minIndex = Arrays.binarySearch(numberOfOfficesOnFloor, minValue);
         return new FloorDTO(numberOfOfficesOnFloor[minIndex], nameOfBuilding);
     }
 
@@ -128,7 +130,7 @@ public class OfficeBuilding implements Building, Serializable, Cloneable {
     @Override
     public int hashCode() {
         int result = numberOfFloors;
-        result ^= Arrays.stream(numberOfOfficesOnFloor).reduce((i1, i2) -> i1 ^ i2).getAsInt();
-        return result ^ nameOfBuilding.chars().reduce((c1, c2) -> c1 ^ c2).getAsInt();
+        result *= Arrays.stream(numberOfOfficesOnFloor).reduce((i1, i2) -> 19 * i1 + i2).getAsInt();
+        return result * nameOfBuilding.chars().reduce((c1, c2) -> 19 * c1 + c2).getAsInt();
     }
 }

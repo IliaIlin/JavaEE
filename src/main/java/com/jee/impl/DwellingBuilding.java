@@ -54,16 +54,18 @@ public class DwellingBuilding implements Building, Serializable, Cloneable {
     }
 
     public FloorDTO findFloorWithMaxRooms() {
-        int maxIndex = Arrays.stream(numberOfFlatsOnFloor).max().getAsInt();
+        int maxValue = Arrays.stream(numberOfFlatsOnFloor).max().getAsInt();
+        int maxIndex = Arrays.binarySearch(numberOfFlatsOnFloor, maxValue);
         return new FloorDTO(numberOfFlatsOnFloor[maxIndex], nameOfBuilding);
     }
 
     public FloorDTO findFloorWithMinRooms() {
-        int minIndex = Arrays.stream(numberOfFlatsOnFloor).min().getAsInt();
+        int minValue = Arrays.stream(numberOfFlatsOnFloor).min().getAsInt();
+        int minIndex = Arrays.binarySearch(numberOfFlatsOnFloor, minValue);
         return new FloorDTO(numberOfFlatsOnFloor[minIndex], nameOfBuilding);
     }
 
-    public List<FloorDTO> getAllFloors(){
+    public List<FloorDTO> getAllFloors() {
         return Arrays.stream(numberOfFlatsOnFloor).
                 mapToObj(i -> new FloorDTO(i, this.nameOfBuilding)).
                 collect(Collectors.toList());
@@ -124,7 +126,7 @@ public class DwellingBuilding implements Building, Serializable, Cloneable {
     @Override
     public int hashCode() {
         int result = numberOfFloors;
-        result ^= Arrays.stream(numberOfFlatsOnFloor).reduce((i1, i2) -> i1 ^ i2).getAsInt();
-        return result ^ nameOfBuilding.chars().reduce((c1, c2) -> c1 ^ c2).getAsInt();
+        result *= Arrays.stream(numberOfFlatsOnFloor).reduce((i1, i2) -> 19 * i1 + i2).getAsInt();
+        return result * nameOfBuilding.chars().reduce((c1, c2) -> 19 * c1 + c2).getAsInt();
     }
 }
