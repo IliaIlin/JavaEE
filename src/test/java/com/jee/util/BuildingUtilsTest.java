@@ -1,5 +1,6 @@
-package com.jee;
+package com.jee.util;
 
+import com.jee.Building;
 import com.jee.dto.FloorDTO;
 import com.jee.impl.DwellingBuilding;
 import com.jee.impl.OfficeBuilding;
@@ -16,9 +17,10 @@ import java.util.Scanner;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class BuildingIOTest {
+public class BuildingUtilsTest {
 
     private static Building testOfficeBuilding, testDwellingBuilding;
+    private static Building[] testBuildings;
 
     private FileInputStream fileInputStream;
     private FileOutputStream fileOutputStream;
@@ -33,6 +35,7 @@ public class BuildingIOTest {
                 2, 3, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 2}, "testOfficeBuilding");
         testDwellingBuilding = new DwellingBuilding(10, new int[]{
                 1, 20, 20, 20, 20, 20, 20, 20, 20, 10}, "testDwellingBuilding");
+        testBuildings = new Building[]{testDwellingBuilding, testOfficeBuilding};
     }
 
     @Before
@@ -45,51 +48,51 @@ public class BuildingIOTest {
 
     @Test
     public void testInputOutputOfficeBuilding() throws Exception {
-        BuildingIO.outputBuilding(testOfficeBuilding, fileOutputStream);
-        Building building = BuildingIO.inputBuilding(fileInputStream);
+        BuildingUtils.outputBuilding(testOfficeBuilding, fileOutputStream);
+        Building building = BuildingUtils.inputBuilding(fileInputStream);
         assertEquals(testOfficeBuilding, building);
     }
 
     @Test
     public void testInputOutputDwellingBuilding() throws Exception {
-        BuildingIO.outputBuilding(testDwellingBuilding, fileOutputStream);
-        Building building = BuildingIO.inputBuilding(fileInputStream);
+        BuildingUtils.outputBuilding(testDwellingBuilding, fileOutputStream);
+        Building building = BuildingUtils.inputBuilding(fileInputStream);
         assertEquals(testDwellingBuilding, building);
     }
 
     @Test
     public void testReadWriteOfficeBuilding() throws Exception {
         try (FileWriter fileWriter = new FileWriter(TEST_FILE_PATH)) {
-            BuildingIO.writeBuilding(testOfficeBuilding, fileWriter);
+            BuildingUtils.writeBuilding(testOfficeBuilding, fileWriter);
         }
-        Building building = BuildingIO.readBuilding(fileReader);
+        Building building = BuildingUtils.readBuilding(fileReader);
         assertEquals(testOfficeBuilding, building);
     }
 
     @Test
     public void testReadWriteDwellingBuilding() throws Exception {
         try (FileWriter fileWriter = new FileWriter(TEST_FILE_PATH)) {
-            BuildingIO.writeBuilding(testDwellingBuilding, fileWriter);
+            BuildingUtils.writeBuilding(testDwellingBuilding, fileWriter);
         }
-        Building building = BuildingIO.readBuilding(fileReader);
+        Building building = BuildingUtils.readBuilding(fileReader);
         assertEquals(testDwellingBuilding, building);
     }
 
     @Test
     public void testOverloadedReadOfficeBuilding() throws Exception {
         try (FileWriter fileWriter = new FileWriter(TEST_FILE_PATH)) {
-            BuildingIO.writeBuilding(testOfficeBuilding, fileWriter);
+            BuildingUtils.writeBuilding(testOfficeBuilding, fileWriter);
         }
-        Building building = BuildingIO.readBuilding(scanner);
+        Building building = BuildingUtils.readBuilding(scanner);
         assertEquals(testOfficeBuilding, building);
     }
 
     @Test
     public void testOverloadedReadDwellingBuilding() throws Exception {
         try (FileWriter fileWriter = new FileWriter(TEST_FILE_PATH)) {
-            BuildingIO.writeBuilding(testDwellingBuilding, fileWriter);
+            BuildingUtils.writeBuilding(testDwellingBuilding, fileWriter);
         }
-        Building building = BuildingIO.readBuilding(scanner);
+        Building building = BuildingUtils.readBuilding(scanner);
         assertEquals(testDwellingBuilding, building);
     }
 
@@ -98,7 +101,7 @@ public class BuildingIOTest {
     public void testPrintFloorDTOListToFile() throws Exception {
         List<FloorDTO> listToWrite = testOfficeBuilding.getAllFloors();
         try (FileWriter fileWriter = new FileWriter(TEST_FILE_PATH)) {
-            BuildingIO.printFloorDTOListToFile(listToWrite, fileWriter);
+            BuildingUtils.printFloorDTOListToFile(listToWrite, fileWriter);
         }
         scanner.close();
         scanner = new Scanner(fileReader);
@@ -114,15 +117,36 @@ public class BuildingIOTest {
 
     @Test
     public void testSerializeDeserializeOfficeBuilding() throws Exception {
-        BuildingIO.serializeBuilding(testOfficeBuilding, TEST_FILE_PATH);
-        Building building = BuildingIO.deserializeBuilding(TEST_FILE_PATH);
+        BuildingUtils.serializeBuilding(testOfficeBuilding, TEST_FILE_PATH);
+        Building building = BuildingUtils.deserializeBuilding(TEST_FILE_PATH);
         assertEquals(testOfficeBuilding, building);
     }
 
     @Test
     public void testSerializeDeserializeDwellingBuilding() throws Exception {
-        BuildingIO.serializeBuilding(testDwellingBuilding, TEST_FILE_PATH);
-        Building building = BuildingIO.deserializeBuilding(TEST_FILE_PATH);
+        BuildingUtils.serializeBuilding(testDwellingBuilding, TEST_FILE_PATH);
+        Building building = BuildingUtils.deserializeBuilding(TEST_FILE_PATH);
         assertEquals(testDwellingBuilding, building);
+    }
+
+    @Test
+    public void testSortBuildingsByRoomsTotal() {
+        BuildingUtils.sortBuildingsByRoomsTotal(testBuildings);
+        assertEquals(testOfficeBuilding, testBuildings[0]);
+        assertEquals(testDwellingBuilding, testBuildings[1]);
+    }
+
+    @Test
+    public void testSortBuildingsByNumberOfFloors() {
+        BuildingUtils.sortBuildingsByNumberOfFloors(testBuildings);
+        assertEquals(testDwellingBuilding, testBuildings[0]);
+        assertEquals(testOfficeBuilding, testBuildings[1]);
+    }
+
+    @Test
+    public void testSortBuildingsByNameOfBuilding() {
+        BuildingUtils.sortBuildingsByNameOfBuilding(testBuildings);
+        assertEquals(testDwellingBuilding, testBuildings[0]);
+        assertEquals(testOfficeBuilding, testBuildings[1]);
     }
 }

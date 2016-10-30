@@ -2,14 +2,19 @@ package com.jee.impl;
 
 import com.jee.Building;
 import com.jee.dto.FloorDTO;
+import com.jee.util.RoomsOnFloorIterator;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.Formatter;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class DwellingBuilding implements Building, Serializable, Cloneable {
+public class DwellingBuilding implements Building {
 
     private int numberOfFloors;
     private int[] numberOfFlatsOnFloor;
@@ -75,7 +80,7 @@ public class DwellingBuilding implements Building, Serializable, Cloneable {
         DataOutputStream dataOutputStream = new DataOutputStream(out);
         dataOutputStream.writeUTF(nameOfBuilding);
         dataOutputStream.writeInt(numberOfFloors);
-        for (Integer i : numberOfFlatsOnFloor) {
+        for (int i : numberOfFlatsOnFloor) {
             dataOutputStream.writeInt(i);
         }
         dataOutputStream.writeUTF("dwelling");
@@ -128,5 +133,14 @@ public class DwellingBuilding implements Building, Serializable, Cloneable {
         int result = numberOfFloors;
         result *= Arrays.stream(numberOfFlatsOnFloor).reduce((i1, i2) -> 19 * i1 + i2).getAsInt();
         return result * nameOfBuilding.chars().reduce((c1, c2) -> 19 * c1 + c2).getAsInt();
+    }
+
+    public Iterator iterator() {
+        return new RoomsOnFloorIterator(this.numberOfFlatsOnFloor);
+    }
+
+    public int compareTo(Object o) {
+        Building comparedDwellingBuilding = (Building) o;
+        return this.countTotalOfRooms() - comparedDwellingBuilding.countTotalOfRooms();
     }
 }

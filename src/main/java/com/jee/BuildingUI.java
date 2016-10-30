@@ -6,6 +6,7 @@ import com.jee.exceptions.NegativeInputNumberException;
 import com.jee.exceptions.WrongBuildingTypeException;
 import com.jee.impl.DwellingBuilding;
 import com.jee.impl.OfficeBuilding;
+import com.jee.util.BuildingUtils;
 
 import java.io.*;
 import java.util.*;
@@ -106,11 +107,11 @@ public class BuildingUI {
                         break;
                     case 8:
                         System.out.println("Specify name of the file. Working directory is: " + OUTPUT_FILE_PATH);
-                        BuildingIO.serializeBuilding(buildings[0], OUTPUT_FILE_PATH + sc.next());
+                        BuildingUtils.serializeBuilding(buildings[0], OUTPUT_FILE_PATH + sc.next());
                         break;
                     case 9:
                         System.out.println("Specify name of the file. Working directory is: " + OUTPUT_FILE_PATH);
-                        Building deserializedBuilding = BuildingIO.deserializeBuilding(OUTPUT_FILE_PATH + sc.next());
+                        Building deserializedBuilding = BuildingUtils.deserializeBuilding(OUTPUT_FILE_PATH + sc.next());
                         System.out.println(deserializedBuilding.toString());
                         break;
                     default:
@@ -130,7 +131,7 @@ public class BuildingUI {
                     "Number of buildings should be positive");
             buildings = new Building[numberOfBuildings];
             for (int i = 0; i < numberOfBuildings; i++) {
-                buildings[i] = BuildingIO.readBuilding(sc);
+                buildings[i] = BuildingUtils.readBuilding(sc);
             }
         } catch (InputMismatchException | NegativeInputNumberException | WrongBuildingTypeException exception) {
             throw new GeneralInputException(exception.getMessage());
@@ -144,7 +145,7 @@ public class BuildingUI {
             numberOfBuildings = (int) streamTokenizer.nval;
             buildings = new Building[numberOfBuildings];
             for (int i = 0; i < numberOfBuildings; i++) {
-                buildings[i] = BuildingIO.readBuilding(fileReader);
+                buildings[i] = BuildingUtils.readBuilding(fileReader);
             }
         } catch (FileNotFoundException exception) {
             throw new GeneralInputException("File is not found.");
@@ -158,7 +159,7 @@ public class BuildingUI {
             numberOfBuildings = fileInputStream.read();
             buildings = new Building[numberOfBuildings];
             for (int i = 0; i < numberOfBuildings; i++) {
-                buildings[i] = BuildingIO.inputBuilding(fileInputStream);
+                buildings[i] = BuildingUtils.inputBuilding(fileInputStream);
             }
         } catch (FileNotFoundException exception) {
             throw new GeneralInputException("File is not found.");
@@ -174,7 +175,7 @@ public class BuildingUI {
     public static void printDataToSymbolStream(Building[] buildings, String fileName) throws GeneralInputException {
         try (FileWriter fileWriter = new FileWriter(OUTPUT_FILE_PATH + fileName)) {
             fileWriter.write(buildings.length + "\n");
-            Arrays.stream(buildings).forEach((building) -> BuildingIO.writeBuilding(building, fileWriter));
+            Arrays.stream(buildings).forEach((building) -> BuildingUtils.writeBuilding(building, fileWriter));
         } catch (IOException exception) {
             throw new GeneralInputException("Error occured while printing data to the symbol stream. Try again");
         }
@@ -184,7 +185,7 @@ public class BuildingUI {
         try (FileOutputStream fileOutputStream = new FileOutputStream(OUTPUT_FILE_PATH + fileName)) {
             fileOutputStream.write(buildings.length);
             for (Building building : buildings) {
-                BuildingIO.outputBuilding(building, fileOutputStream);
+                BuildingUtils.outputBuilding(building, fileOutputStream);
             }
         } catch (IOException exception) {
             throw new GeneralInputException("Error occured while printing data to the byte stream. Try again");
@@ -193,7 +194,7 @@ public class BuildingUI {
 
     public static void printDtoToFile(List<FloorDTO> floors, String fileName) throws GeneralInputException {
         try (FileWriter fileWriter = new FileWriter(OUTPUT_FILE_PATH + fileName)) {
-            BuildingIO.printFloorDTOListToFile(floors, fileWriter);
+            BuildingUtils.printFloorDTOListToFile(floors, fileWriter);
         } catch (IOException exception) {
             throw new GeneralInputException("Error occured while printing floors to the file. Try again");
         }

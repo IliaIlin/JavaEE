@@ -4,10 +4,12 @@ import com.jee.dto.FloorDTO;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.io.Writer;
 import java.util.List;
+import java.util.function.Consumer;
 
-public interface Building {
+public interface Building extends Serializable, Cloneable, Iterable, Comparable {
 
     int getNumberOfFloors();
 
@@ -33,5 +35,5 @@ public interface Building {
 
     void write(Writer out);
 
-    Object clone();
+    int compareTo(Object o);
 }

@@ -3,14 +3,16 @@ package com.jee.impl;
 
 import com.jee.Building;
 import com.jee.dto.FloorDTO;
+import com.jee.util.RoomsOnFloorIterator;
 
 import java.io.*;
 import java.util.Arrays;
 import java.util.Formatter;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class OfficeBuilding implements Building, Serializable, Cloneable {
+public class OfficeBuilding implements Building {
 
     private int numberOfFloors;
     private int[] numberOfOfficesOnFloor;
@@ -78,8 +80,8 @@ public class OfficeBuilding implements Building, Serializable, Cloneable {
         DataOutputStream dataOutputStream = new DataOutputStream(out);
         dataOutputStream.writeUTF(nameOfBuilding);
         dataOutputStream.writeInt(numberOfFloors);
-        for (int i = 0; i < numberOfFloors; i++) {
-            dataOutputStream.writeInt(numberOfOfficesOnFloor[i]);
+        for (int i : numberOfOfficesOnFloor) {
+            dataOutputStream.writeInt(i);
         }
         dataOutputStream.writeUTF("office");
     }
@@ -91,6 +93,7 @@ public class OfficeBuilding implements Building, Serializable, Cloneable {
         formatter.format("%s %n", "office");
     }
 
+    @Override
     public Object clone() {
         OfficeBuilding result = null;
         try {
@@ -132,5 +135,14 @@ public class OfficeBuilding implements Building, Serializable, Cloneable {
         int result = numberOfFloors;
         result *= Arrays.stream(numberOfOfficesOnFloor).reduce((i1, i2) -> 19 * i1 + i2).getAsInt();
         return result * nameOfBuilding.chars().reduce((c1, c2) -> 19 * c1 + c2).getAsInt();
+    }
+
+    public Iterator iterator() {
+        return new RoomsOnFloorIterator(this.numberOfOfficesOnFloor);
+    }
+
+    public int compareTo(Object o) {
+        Building comparedOfficeBuilding = (Building) o;
+        return this.countTotalOfRooms() - comparedOfficeBuilding.countTotalOfRooms();
     }
 }

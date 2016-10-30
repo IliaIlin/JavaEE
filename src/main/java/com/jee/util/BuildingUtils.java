@@ -1,18 +1,22 @@
-package com.jee;
+package com.jee.util;
 
+import com.jee.Building;
 import com.jee.dto.FloorDTO;
 import com.jee.exceptions.GeneralInputException;
 import com.jee.exceptions.NegativeInputNumberException;
 import com.jee.exceptions.WrongBuildingTypeException;
 import com.jee.impl.DwellingBuilding;
 import com.jee.impl.OfficeBuilding;
+import com.jee.util.NameOfBuildingComparator;
+import com.jee.util.NumberOfFloorsComparator;
 
 import java.io.*;
+import java.util.Arrays;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Scanner;
 
-public class BuildingIO {
+public class BuildingUtils {
 
     public static void outputBuilding(Building building, OutputStream out) throws IOException {
         building.output(out);
@@ -115,5 +119,17 @@ public class BuildingIO {
         } catch (ClassNotFoundException exception) {
             throw new GeneralInputException("Class is not found");
         }
+    }
+
+    public static void sortBuildingsByRoomsTotal(Building[] buildings) {
+        Arrays.sort(buildings);
+    }
+
+    public static void sortBuildingsByNumberOfFloors(Building[] buildings) {
+        Arrays.sort(buildings, new NumberOfFloorsComparator());
+    }
+
+    public static void sortBuildingsByNameOfBuilding(Building[] buildings) {
+        Arrays.sort(buildings, new NameOfBuildingComparator());
     }
 }

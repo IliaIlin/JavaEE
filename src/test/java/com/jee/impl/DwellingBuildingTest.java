@@ -4,12 +4,11 @@ import com.jee.dto.FloorDTO;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 public class DwellingBuildingTest {
 
@@ -17,6 +16,8 @@ public class DwellingBuildingTest {
     private static int testWrongNumberOfFloors;
     private static int[] testNumberRoomsOnFloor;
     private static int[] testWrongNumberRoomsOnFloor;
+    private static int[] testLessRoomsOnFloor;
+    private static int[] testMoreRoomsOnFloor;
     private static String testNameOfBuilding;
     private static String testWrongNameOfBuilding;
     private static int testTotalRoomsCount;
@@ -30,9 +31,11 @@ public class DwellingBuildingTest {
     @BeforeClass
     public static void setUp() throws Exception {
         testNumberOfFloors = 3;
-        testWrongNumberOfFloors = 1;
+        testWrongNumberOfFloors = 4;
         testNumberRoomsOnFloor = new int[]{1, 2, 3};
         testWrongNumberRoomsOnFloor = new int[]{3, 2, 1};
+        testLessRoomsOnFloor = new int[]{1, 1, 1};
+        testMoreRoomsOnFloor = new int[]{2, 3, 4, 5};
         testNameOfBuilding = "testDwellingBuilding";
         testWrongNameOfBuilding = "testWrongDwellingBuilding";
 
@@ -107,5 +110,34 @@ public class DwellingBuildingTest {
         clonedTestDwellingBuilding.setNumberOfRoomsOnFloor(testNumberRoomsOnFloor);
         clonedTestDwellingBuilding.setNameOfBuilding(testWrongNameOfBuilding);
         assertNotEquals(expectedHashCode, clonedTestDwellingBuilding.hashCode());
+    }
+
+    @Test
+    public void testIterator() {
+        Iterator iterator = testDwellingBuilding.iterator();
+        int i = 0;
+        while (iterator.hasNext()) {
+            assertEquals(testNumberRoomsOnFloor[i], iterator.next());
+            i++;
+        }
+    }
+
+    @Test(expected = NoSuchElementException.class)
+    public void testOutOfBoundsIterator() {
+        Iterator iterator = testDwellingBuilding.iterator();
+        for (int i = 0; i < testWrongNumberOfFloors; i++)
+            iterator.next();
+    }
+
+    @Test
+    public void testCompareTo() {
+        DwellingBuilding clonedDwellingBuilding = (DwellingBuilding) testDwellingBuilding.clone();
+        assertTrue(testDwellingBuilding.compareTo(clonedDwellingBuilding) == 0);
+
+        clonedDwellingBuilding.setNumberOfRoomsOnFloor(testLessRoomsOnFloor);
+        assertTrue(testDwellingBuilding.compareTo(clonedDwellingBuilding) > 0);
+
+        clonedDwellingBuilding.setNumberOfRoomsOnFloor(testMoreRoomsOnFloor);
+        assertTrue(testDwellingBuilding.compareTo(clonedDwellingBuilding) < 0);
     }
 }
