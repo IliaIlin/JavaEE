@@ -217,6 +217,7 @@ public class BuildingUI {
         officeBuildings = Arrays.stream(buildings).
                 filter(building -> building instanceof OfficeBuilding).
                 collect(Collectors.toList()).toArray(new OfficeBuilding[0]);
+
         dwellingBuildings = Arrays.stream(buildings).
                 filter(building -> building instanceof DwellingBuilding).
                 collect(Collectors.toList()).toArray(new DwellingBuilding[0]);

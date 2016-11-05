@@ -5,18 +5,29 @@ import com.jee.dto.FloorDTO;
 import com.jee.exceptions.GeneralInputException;
 import com.jee.exceptions.NegativeInputNumberException;
 import com.jee.exceptions.WrongBuildingTypeException;
+import com.jee.factory.BuildingFactory;
+import com.jee.factory.DwellingBuildingFactory;
 import com.jee.impl.DwellingBuilding;
 import com.jee.impl.OfficeBuilding;
-import com.jee.util.NameOfBuildingComparator;
-import com.jee.util.NumberOfFloorsComparator;
 
 import java.io.*;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.Formatter;
 import java.util.List;
 import java.util.Scanner;
 
 public class BuildingUtils {
+
+    //DwellingBuildingFactory serves as default value;
+    private static BuildingFactory buildingFactory = new DwellingBuildingFactory();
+
+    public static void setBuildingFactory(BuildingFactory factory) {
+        buildingFactory = factory;
+    }
+
+    public static Building createInstance(int numberOfFloors, int[] numberOfRoomsOnFloor, String nameOfBuilding) {
+        return buildingFactory.createInstance(numberOfFloors, numberOfRoomsOnFloor, nameOfBuilding);
+    }
 
     public static void outputBuilding(Building building, OutputStream out) throws IOException {
         building.output(out);
@@ -121,15 +132,19 @@ public class BuildingUtils {
         }
     }
 
-    public static void sortBuildingsByRoomsTotal(Building[] buildings) {
-        Arrays.sort(buildings);
+    public static void sortBuildingsByRoomsTotal(List<Building> buildings) {
+        Collections.sort(buildings);
     }
 
-    public static void sortBuildingsByNumberOfFloors(Building[] buildings) {
-        Arrays.sort(buildings, new NumberOfFloorsComparator());
+    public static void sortBuildingsByNumberOfFloors(List<Building> buildings) {
+        Collections.sort(buildings, new NumberOfFloorsComparator());
     }
 
-    public static void sortBuildingsByNameOfBuilding(Building[] buildings) {
-        Arrays.sort(buildings, new NameOfBuildingComparator());
+    public static void sortBuildingsByNameOfBuilding(List<Building> buildings) {
+        Collections.sort(buildings, new NameOfBuildingComparator());
+    }
+
+    public static Building unmodifiableBuilding(Building building) {
+        return new UnmodifiableBuildingDecorator(building);
     }
 }

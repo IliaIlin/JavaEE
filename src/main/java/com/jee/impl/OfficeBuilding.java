@@ -5,7 +5,10 @@ import com.jee.Building;
 import com.jee.dto.FloorDTO;
 import com.jee.util.RoomsOnFloorIterator;
 
-import java.io.*;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.Formatter;
 import java.util.Iterator;
@@ -80,7 +83,7 @@ public class OfficeBuilding implements Building {
         DataOutputStream dataOutputStream = new DataOutputStream(out);
         dataOutputStream.writeUTF(nameOfBuilding);
         dataOutputStream.writeInt(numberOfFloors);
-        for (int i : numberOfOfficesOnFloor) {
+        for (int i : this) {
             dataOutputStream.writeInt(i);
         }
         dataOutputStream.writeUTF("office");
@@ -141,8 +144,7 @@ public class OfficeBuilding implements Building {
         return new RoomsOnFloorIterator(this.numberOfOfficesOnFloor);
     }
 
-    public int compareTo(Object o) {
-        Building comparedOfficeBuilding = (Building) o;
+    public int compareTo(Building comparedOfficeBuilding) {
         return this.countTotalOfRooms() - comparedOfficeBuilding.countTotalOfRooms();
     }
 }

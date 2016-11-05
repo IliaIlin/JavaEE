@@ -24,7 +24,7 @@ public class RoomsOnFloorIterator implements Iterator<Integer> {
     }
 
     public Integer next() {
-        if (cursor == sizeOfArray) {
+        if (!hasNext()) {
             throw new NoSuchElementException();
         } else {
             return roomsOnFloors[cursor++];

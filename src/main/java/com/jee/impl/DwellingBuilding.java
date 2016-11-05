@@ -139,8 +139,7 @@ public class DwellingBuilding implements Building {
         return new RoomsOnFloorIterator(this.numberOfFlatsOnFloor);
     }
 
-    public int compareTo(Object o) {
-        Building comparedDwellingBuilding = (Building) o;
+    public int compareTo(Building comparedDwellingBuilding) {
         return this.countTotalOfRooms() - comparedDwellingBuilding.countTotalOfRooms();
     }
 }

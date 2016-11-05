@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.io.Writer;
+import java.util.Iterator;
 import java.util.List;
-import java.util.function.Consumer;
 
-public interface Building extends Serializable, Cloneable, Iterable, Comparable {
+public interface Building extends Serializable, Cloneable, Iterable<Integer>, Comparable<Building> {
 
     int getNumberOfFloors();
 
@@ -35,5 +35,15 @@ public interface Building extends Serializable, Cloneable, Iterable, Comparable 
 
     void write(Writer out);
 
-    int compareTo(Object o);
+    Object clone();
+
+    String toString();
+
+    boolean equals(Object object);
+
+    int hashCode();
+
+    Iterator iterator();
+
+    int compareTo(Building comparedBuilding);
 }

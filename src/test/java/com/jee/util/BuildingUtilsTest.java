@@ -19,8 +19,15 @@ import static org.junit.Assert.assertTrue;
 
 public class BuildingUtilsTest {
 
+    private static int testFirstNumberOfFloors;
+    private static int testSecondNumberOfFloors;
+    private static int [] testFirstNumberRoomsOnFloor;
+    private static int [] testSecondNumberRoomsOnFloor;
+    private static String testFirstBuildingName;
+    private static String testSecondBuildingName;
+
     private static Building testOfficeBuilding, testDwellingBuilding;
-    private static Building[] testBuildings;
+    private static List<Building> testBuildings;
 
     private FileInputStream fileInputStream;
     private FileOutputStream fileOutputStream;
@@ -31,11 +38,22 @@ public class BuildingUtilsTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        testOfficeBuilding = new OfficeBuilding(17, new int[]{
-                2, 3, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 2}, "testOfficeBuilding");
-        testDwellingBuilding = new DwellingBuilding(10, new int[]{
-                1, 20, 20, 20, 20, 20, 20, 20, 20, 10}, "testDwellingBuilding");
-        testBuildings = new Building[]{testDwellingBuilding, testOfficeBuilding};
+        testFirstNumberOfFloors=17;
+        testFirstNumberRoomsOnFloor=new int[]
+                {2, 3, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 2};
+        testFirstBuildingName="testOfficeBuilding";
+        testSecondNumberOfFloors=10;
+        testSecondNumberRoomsOnFloor=new int[]
+                {1, 20, 20, 20, 20, 20, 20, 20, 20, 10};
+        testSecondBuildingName="testDwellingBuilding";
+
+        testOfficeBuilding = new OfficeBuilding(
+                testFirstNumberOfFloors,testFirstNumberRoomsOnFloor,testFirstBuildingName);
+        testDwellingBuilding = new DwellingBuilding(
+                testSecondNumberOfFloors,testSecondNumberRoomsOnFloor,testSecondBuildingName);
+        testBuildings = new ArrayList<>();
+        testBuildings.add(testDwellingBuilding);
+        testBuildings.add(testOfficeBuilding);
     }
 
     @Before
@@ -44,6 +62,13 @@ public class BuildingUtilsTest {
         fileOutputStream = new FileOutputStream(TEST_FILE_PATH);
         fileReader = new FileReader(TEST_FILE_PATH);
         scanner = new Scanner(fileInputStream);
+    }
+
+    @Test
+    public void testCreateInstance() {
+        Building createdBuilding=BuildingUtils.createInstance(
+                testFirstNumberOfFloors,testFirstNumberRoomsOnFloor,testFirstBuildingName);
+    assertEquals(testOfficeBuilding,createdBuilding);
     }
 
     @Test
@@ -132,21 +157,39 @@ public class BuildingUtilsTest {
     @Test
     public void testSortBuildingsByRoomsTotal() {
         BuildingUtils.sortBuildingsByRoomsTotal(testBuildings);
-        assertEquals(testOfficeBuilding, testBuildings[0]);
-        assertEquals(testDwellingBuilding, testBuildings[1]);
+        assertEquals(testOfficeBuilding, testBuildings.get(0));
+        assertEquals(testDwellingBuilding, testBuildings.get(1));
     }
 
     @Test
     public void testSortBuildingsByNumberOfFloors() {
         BuildingUtils.sortBuildingsByNumberOfFloors(testBuildings);
-        assertEquals(testDwellingBuilding, testBuildings[0]);
-        assertEquals(testOfficeBuilding, testBuildings[1]);
+        assertEquals(testDwellingBuilding, testBuildings.get(0));
+        assertEquals(testOfficeBuilding, testBuildings.get(1));
     }
 
     @Test
     public void testSortBuildingsByNameOfBuilding() {
         BuildingUtils.sortBuildingsByNameOfBuilding(testBuildings);
-        assertEquals(testDwellingBuilding, testBuildings[0]);
-        assertEquals(testOfficeBuilding, testBuildings[1]);
+        assertEquals(testDwellingBuilding, testBuildings.get(0));
+        assertEquals(testOfficeBuilding, testBuildings.get(1));
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testUnmodifiableSetNumberOfFloors() {
+        Building building = BuildingUtils.unmodifiableBuilding(testOfficeBuilding);
+        building.setNumberOfFloors(5);
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testUnmodifiableSetNumberOfRoomsOnFloor() {
+        Building building = BuildingUtils.unmodifiableBuilding(testOfficeBuilding);
+        building.setNumberOfRoomsOnFloor(new int[]{1, 2, 3});
+    }
+
+    @Test(expected = UnsupportedOperationException.class)
+    public void testUnmodifiableSetNameOfBuilding() {
+        Building building = BuildingUtils.unmodifiableBuilding(testOfficeBuilding);
+        building.setNameOfBuilding("test");
     }
 }
