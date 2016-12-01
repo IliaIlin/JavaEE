@@ -9,6 +9,8 @@ import com.jee.factory.BuildingFactory;
 import com.jee.factory.DwellingBuildingFactory;
 import com.jee.impl.DwellingBuilding;
 import com.jee.impl.OfficeBuilding;
+import com.jee.impl.SynchronizedBuilding;
+import com.jee.impl.UnmodifiableBuilding;
 
 import java.io.*;
 import java.util.Collections;
@@ -145,6 +147,10 @@ public class BuildingUtils {
     }
 
     public static Building unmodifiableBuilding(Building building) {
-        return new UnmodifiableBuildingDecorator(building);
+        return new UnmodifiableBuilding(building);
+    }
+
+    public static Building synchronizedBuilding(Building building) {
+        return new SynchronizedBuilding(building);
     }
 }

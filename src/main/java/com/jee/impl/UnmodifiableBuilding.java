@@ -1,4 +1,4 @@
-package com.jee.util;
+package com.jee.impl;
 
 import com.jee.Building;
 import com.jee.dto.FloorDTO;
@@ -9,20 +9,18 @@ import java.io.Writer;
 import java.util.Iterator;
 import java.util.List;
 
-public class UnmodifiableBuildingDecorator implements Building {
+public class UnmodifiableBuilding implements Building {
 
     private Building unmodifiableBuilding;
 
-    public UnmodifiableBuildingDecorator(Building modifiableBuilding) {
-        this.unmodifiableBuilding = modifiableBuilding;
+    public UnmodifiableBuilding(Building modifiableBuilding) {
+        unmodifiableBuilding = modifiableBuilding;
     }
 
-    @Override
     public int getNumberOfFloors() {
         return unmodifiableBuilding.getNumberOfFloors();
     }
 
-    @Override
     public void setNumberOfFloors(int numberOfFloors) {
         throw new UnsupportedOperationException();
     }
@@ -67,18 +65,22 @@ public class UnmodifiableBuildingDecorator implements Building {
         unmodifiableBuilding.write(out);
     }
 
+    @Override
     public Object clone() {
         return unmodifiableBuilding.clone();
     }
 
+    @Override
     public String toString() {
         return unmodifiableBuilding.toString();
     }
 
+    @Override
     public boolean equals(Object object) {
         return unmodifiableBuilding.equals(object);
     }
 
+    @Override
     public int hashCode() {
         return unmodifiableBuilding.hashCode();
     }
