@@ -62,12 +62,14 @@ public class OfficeBuilding implements Building {
     }
 
     public FloorDTO findFloorWithMaxRooms() {
+        Arrays.sort(numberOfOfficesOnFloor);
         int maxValue = Arrays.stream(numberOfOfficesOnFloor).max().getAsInt();
         int maxIndex = Arrays.binarySearch(numberOfOfficesOnFloor, maxValue);
         return new FloorDTO(numberOfOfficesOnFloor[maxIndex], nameOfBuilding);
     }
 
     public FloorDTO findFloorWithMinRooms() {
+        Arrays.sort(numberOfOfficesOnFloor);
         int minValue = Arrays.stream(numberOfOfficesOnFloor).min().getAsInt();
         int minIndex = Arrays.binarySearch(numberOfOfficesOnFloor, minValue);
         return new FloorDTO(numberOfOfficesOnFloor[minIndex], nameOfBuilding);
@@ -86,14 +88,13 @@ public class OfficeBuilding implements Building {
         for (int i : this) {
             dataOutputStream.writeInt(i);
         }
-        dataOutputStream.writeUTF("office");
     }
 
     public void write(Writer out) {
         Formatter formatter = new Formatter(out);
         formatter.format("%s %d ", nameOfBuilding, numberOfFloors);
         Arrays.stream(numberOfOfficesOnFloor).forEach(i -> formatter.format("%d ", i));
-        formatter.format("%s %n", "office");
+        formatter.format("\n");
     }
 
     @Override
@@ -141,7 +142,7 @@ public class OfficeBuilding implements Building {
     }
 
     public Iterator iterator() {
-        return new RoomsOnFloorIterator(this.numberOfOfficesOnFloor);
+        return new RoomsOnFloorIterator(this);
     }
 
     public int compareTo(Building comparedOfficeBuilding) {

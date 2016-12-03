@@ -1,5 +1,7 @@
 package com.jee.util;
 
+import com.jee.Building;
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
@@ -9,8 +11,8 @@ public class RoomsOnFloorIterator implements Iterator<Integer> {
     private int sizeOfArray;
     private int cursor;
 
-    public RoomsOnFloorIterator(int[] roomsOnFloors) {
-        this.roomsOnFloors = roomsOnFloors;
+    public RoomsOnFloorIterator(Building building) {
+        this.roomsOnFloors = building.getNumberOfRoomsOnFloor();
         sizeOfArray = roomsOnFloors.length;
         cursor = 0;
 

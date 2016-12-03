@@ -4,11 +4,8 @@ import com.jee.Building;
 import com.jee.dto.FloorDTO;
 import com.jee.exceptions.GeneralInputException;
 import com.jee.exceptions.NegativeInputNumberException;
-import com.jee.exceptions.WrongBuildingTypeException;
 import com.jee.factory.BuildingFactory;
 import com.jee.factory.DwellingBuildingFactory;
-import com.jee.impl.DwellingBuilding;
-import com.jee.impl.OfficeBuilding;
 import com.jee.impl.SynchronizedBuilding;
 import com.jee.impl.UnmodifiableBuilding;
 
@@ -43,16 +40,7 @@ public class BuildingUtils {
         for (int i = 0; i < numberOfFloors; i++) {
             numberOfRoomsOnFloor[i] = dataInputStream.readInt();
         }
-        try {
-            String buildingType = dataInputStream.readUTF().toLowerCase();
-            if (buildingType.equals("office")) {
-                return new OfficeBuilding(numberOfFloors, numberOfRoomsOnFloor, nameOfBuilding);
-            } else if (buildingType.equals("dwelling")) {
-                return new DwellingBuilding(numberOfFloors, numberOfRoomsOnFloor, nameOfBuilding);
-            } else throw new WrongBuildingTypeException("com.jee.Building type should be office or dwelling");
-        } catch (WrongBuildingTypeException exception) {
-            throw new IOException(exception.getMessage());
-        }
+        return createInstance(numberOfFloors, numberOfRoomsOnFloor, nameOfBuilding);
     }
 
     public static void writeBuilding(Building building, Writer out) {
@@ -70,17 +58,7 @@ public class BuildingUtils {
             streamTokenizer.nextToken();
             numberOfRoomsOnFloor[i] = (int) streamTokenizer.nval;
         }
-        streamTokenizer.nextToken();
-        try {
-            String buildingType = streamTokenizer.sval.toLowerCase();
-            if (buildingType.equals("office")) {
-                return new OfficeBuilding(numberOfFloors, numberOfRoomsOnFloor, nameOfBuilding);
-            } else if (buildingType.equals("dwelling")) {
-                return new DwellingBuilding(numberOfFloors, numberOfRoomsOnFloor, nameOfBuilding);
-            } else throw new WrongBuildingTypeException("com.jee.Building type should be office or dwelling");
-        } catch (WrongBuildingTypeException exception) {
-            throw new IOException(exception.getMessage());
-        }
+        return createInstance(numberOfFloors, numberOfRoomsOnFloor, nameOfBuilding);
     }
 
     public static Building readBuilding(Scanner in) {
@@ -96,13 +74,7 @@ public class BuildingUtils {
             if (numberOfRoomsOnFloor[j] < 0) throw new NegativeInputNumberException(
                     "Number of rooms on each floor should be positive");
         }
-        System.out.println("Enter type of building (office of dwelling): ");
-        String buildingType = in.next().toLowerCase();
-        if (buildingType.equals("office"))
-            return new OfficeBuilding(numberOfFloors, numberOfRoomsOnFloor, nameOfBuilding);
-        else if (buildingType.equals("dwelling"))
-            return new DwellingBuilding(numberOfFloors, numberOfRoomsOnFloor, nameOfBuilding);
-        else throw new WrongBuildingTypeException("com.jee.Building type should be office or dwelling");
+        return createInstance(numberOfFloors, numberOfRoomsOnFloor, nameOfBuilding);
     }
 
     public static void printFloorDTOListToFile(List<FloorDTO> floors, Writer out) {

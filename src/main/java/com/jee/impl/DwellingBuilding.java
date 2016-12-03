@@ -59,12 +59,14 @@ public class DwellingBuilding implements Building {
     }
 
     public FloorDTO findFloorWithMaxRooms() {
+        Arrays.sort(numberOfFlatsOnFloor);
         int maxValue = Arrays.stream(numberOfFlatsOnFloor).max().getAsInt();
         int maxIndex = Arrays.binarySearch(numberOfFlatsOnFloor, maxValue);
         return new FloorDTO(numberOfFlatsOnFloor[maxIndex], nameOfBuilding);
     }
 
     public FloorDTO findFloorWithMinRooms() {
+        Arrays.sort(numberOfFlatsOnFloor);
         int minValue = Arrays.stream(numberOfFlatsOnFloor).min().getAsInt();
         int minIndex = Arrays.binarySearch(numberOfFlatsOnFloor, minValue);
         return new FloorDTO(numberOfFlatsOnFloor[minIndex], nameOfBuilding);
@@ -80,17 +82,16 @@ public class DwellingBuilding implements Building {
         DataOutputStream dataOutputStream = new DataOutputStream(out);
         dataOutputStream.writeUTF(nameOfBuilding);
         dataOutputStream.writeInt(numberOfFloors);
-        for (int i : numberOfFlatsOnFloor) {
+        for (int i : this) {
             dataOutputStream.writeInt(i);
         }
-        dataOutputStream.writeUTF("dwelling");
     }
 
     public void write(Writer out) {
         Formatter formatter = new Formatter(out);
         formatter.format("%s %d ", nameOfBuilding, numberOfFloors);
         Arrays.stream(numberOfFlatsOnFloor).forEach(i -> formatter.format("%d ", i));
-        formatter.format("%s %n", "dwelling");
+        formatter.format("\n");
     }
 
     public Object clone() {
@@ -136,7 +137,7 @@ public class DwellingBuilding implements Building {
     }
 
     public Iterator iterator() {
-        return new RoomsOnFloorIterator(this.numberOfFlatsOnFloor);
+        return new RoomsOnFloorIterator(this);
     }
 
     public int compareTo(Building comparedDwellingBuilding) {

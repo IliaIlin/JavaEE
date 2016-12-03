@@ -5,6 +5,7 @@ import com.jee.Building;
 import java.util.Random;
 
 public class FirstThreadExtension extends Thread {
+
     private Building building;
     private Random random;
 

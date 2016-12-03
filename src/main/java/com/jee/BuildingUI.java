@@ -3,7 +3,6 @@ package com.jee;
 import com.jee.dto.FloorDTO;
 import com.jee.exceptions.GeneralInputException;
 import com.jee.exceptions.NegativeInputNumberException;
-import com.jee.exceptions.WrongBuildingTypeException;
 import com.jee.impl.DwellingBuilding;
 import com.jee.impl.OfficeBuilding;
 import com.jee.util.BuildingUtils;
@@ -15,10 +14,9 @@ import java.util.stream.Collectors;
 public class BuildingUI {
 
     static Scanner sc = new Scanner(System.in);
-    static int numberOfBuildings;
-    static Building[] buildings;
-    static OfficeBuilding[] officeBuildings;
-    static DwellingBuilding[] dwellingBuildings;
+    static List<Building> buildings = new ArrayList<>();
+    static List<Building> officeBuildings = new ArrayList<>();
+    static List<Building> dwellingBuildings = new ArrayList<>();
     static final String INPUT_FILE_PATH = "src/main/resources/inputFiles/";
     static final String OUTPUT_FILE_PATH = "src/main/resources/outputFiles/";
 
@@ -107,7 +105,7 @@ public class BuildingUI {
                         break;
                     case 8:
                         System.out.println("Specify name of the file. Working directory is: " + OUTPUT_FILE_PATH);
-                        BuildingUtils.serializeBuilding(buildings[0], OUTPUT_FILE_PATH + sc.next());
+                        BuildingUtils.serializeBuilding(buildings.get(0), OUTPUT_FILE_PATH + sc.next());
                         break;
                     case 9:
                         System.out.println("Specify name of the file. Working directory is: " + OUTPUT_FILE_PATH);
@@ -124,16 +122,16 @@ public class BuildingUI {
     }
 
     public static void inputDataFromConsole() throws GeneralInputException {
+        buildings = new ArrayList<>();
         System.out.println("Enter number of buildings: ");
         try {
             int numberOfBuildings = sc.nextInt();
             if (numberOfBuildings < 0) throw new NegativeInputNumberException(
                     "Number of buildings should be positive");
-            buildings = new Building[numberOfBuildings];
             for (int i = 0; i < numberOfBuildings; i++) {
-                buildings[i] = BuildingUtils.readBuilding(sc);
+                buildings.add(BuildingUtils.readBuilding(sc));
             }
-        } catch (InputMismatchException | NegativeInputNumberException | WrongBuildingTypeException exception) {
+        } catch (InputMismatchException | NegativeInputNumberException exception) {
             throw new GeneralInputException(exception.getMessage());
         }
     }
@@ -142,10 +140,9 @@ public class BuildingUI {
         try (FileReader fileReader = new FileReader(INPUT_FILE_PATH + fileName)) {
             StreamTokenizer streamTokenizer = new StreamTokenizer(fileReader);
             streamTokenizer.nextToken();
-            numberOfBuildings = (int) streamTokenizer.nval;
-            buildings = new Building[numberOfBuildings];
+            int numberOfBuildings = (int) streamTokenizer.nval;
             for (int i = 0; i < numberOfBuildings; i++) {
-                buildings[i] = BuildingUtils.readBuilding(fileReader);
+                buildings.add(BuildingUtils.readBuilding(fileReader));
             }
         } catch (FileNotFoundException exception) {
             throw new GeneralInputException("File is not found.");
@@ -156,10 +153,9 @@ public class BuildingUI {
 
     public static void inputDataFromByteStream(String fileName) throws GeneralInputException {
         try (FileInputStream fileInputStream = new FileInputStream(INPUT_FILE_PATH + fileName)) {
-            numberOfBuildings = fileInputStream.read();
-            buildings = new Building[numberOfBuildings];
+            int numberOfBuildings = fileInputStream.read();
             for (int i = 0; i < numberOfBuildings; i++) {
-                buildings[i] = BuildingUtils.inputBuilding(fileInputStream);
+                buildings.add(BuildingUtils.inputBuilding(fileInputStream));
             }
         } catch (FileNotFoundException exception) {
             throw new GeneralInputException("File is not found.");
@@ -168,22 +164,23 @@ public class BuildingUI {
         }
     }
 
-    public static void printDataToConsole(Building[] buildings) {
-        Arrays.stream(buildings).forEach((building) -> System.out.println(building.toString()));
+    public static void printDataToConsole(List<Building> buildings) {
+        buildings.stream().forEach((building) -> System.out.println(building.toString()));
     }
 
-    public static void printDataToSymbolStream(Building[] buildings, String fileName) throws GeneralInputException {
+    public static void printDataToSymbolStream(List<Building> buildings, String fileName) throws GeneralInputException {
         try (FileWriter fileWriter = new FileWriter(OUTPUT_FILE_PATH + fileName)) {
-            fileWriter.write(buildings.length + "\n");
-            Arrays.stream(buildings).forEach((building) -> BuildingUtils.writeBuilding(building, fileWriter));
+            fileWriter.write(buildings.size() + "\n");
+            buildings.stream()
+                    .forEach((building) -> BuildingUtils.writeBuilding(building, fileWriter));
         } catch (IOException exception) {
             throw new GeneralInputException("Error occured while printing data to the symbol stream. Try again");
         }
     }
 
-    public static void printDataToByteStream(Building[] buildings, String fileName) throws GeneralInputException {
+    public static void printDataToByteStream(List<Building> buildings, String fileName) throws GeneralInputException {
         try (FileOutputStream fileOutputStream = new FileOutputStream(OUTPUT_FILE_PATH + fileName)) {
-            fileOutputStream.write(buildings.length);
+            fileOutputStream.write(buildings.size());
             for (Building building : buildings) {
                 BuildingUtils.outputBuilding(building, fileOutputStream);
             }
@@ -200,39 +197,39 @@ public class BuildingUI {
         }
     }
 
-    public static Building[] findBuildingsSameByRoomsTotal() {
-        List<Integer> totalRoomsInBuildings = Arrays.stream(buildings).
-                map(building -> building.countTotalOfRooms()).
-                collect(Collectors.toList());
+    public static List<Building> findBuildingsSameByRoomsTotal() {
+        List<Integer> totalRoomsInBuildings = buildings.stream()
+                .map(building -> building.countTotalOfRooms())
+                .collect(Collectors.toList());
         List<Building> buildingsWithSameTotal = new ArrayList<>();
-        for (int i = 0; i < buildings.length; i++) {
+        for (int i = 0; i < buildings.size(); i++) {
             if (Collections.frequency(totalRoomsInBuildings, totalRoomsInBuildings.get(i)) > 1) {
-                buildingsWithSameTotal.add(buildings[i]);
+                buildingsWithSameTotal.add(buildings.get(i));
             }
         }
-        return buildingsWithSameTotal.toArray(new Building[0]);
+        return buildingsWithSameTotal;
     }
 
     public static void separateBuildingsByType() {
-        officeBuildings = Arrays.stream(buildings).
-                filter(building -> building instanceof OfficeBuilding).
-                collect(Collectors.toList()).toArray(new OfficeBuilding[0]);
+        officeBuildings = buildings.stream()
+                .filter(building -> building instanceof OfficeBuilding)
+                .collect(Collectors.toList());
 
-        dwellingBuildings = Arrays.stream(buildings).
-                filter(building -> building instanceof DwellingBuilding).
-                collect(Collectors.toList()).toArray(new DwellingBuilding[0]);
+        dwellingBuildings = buildings.stream()
+                .filter(building -> building instanceof DwellingBuilding)
+                .collect(Collectors.toList());
     }
 
     public static List<FloorDTO> findFloorsWithMaxRooms() {
-        return Arrays.stream(buildings).
-                map(building -> building.findFloorWithMaxRooms()).
-                collect(Collectors.toList());
+        return buildings.stream()
+                .map(building -> building.findFloorWithMaxRooms())
+                .collect(Collectors.toList());
     }
 
     public static List<FloorDTO> findFloorsWithMinRooms() {
-        return Arrays.stream(buildings).
-                map(building -> building.findFloorWithMinRooms()).
-                collect(Collectors.toList());
+        return buildings.stream()
+                .map(building -> building.findFloorWithMinRooms())
+                .collect(Collectors.toList());
     }
 
 

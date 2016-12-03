@@ -21,12 +21,12 @@ public class BuildingUtilsTest {
 
     private static int testFirstNumberOfFloors;
     private static int testSecondNumberOfFloors;
-    private static int [] testFirstNumberRoomsOnFloor;
-    private static int [] testSecondNumberRoomsOnFloor;
+    private static int[] testFirstNumberRoomsOnFloor;
+    private static int[] testSecondNumberRoomsOnFloor;
     private static String testFirstBuildingName;
     private static String testSecondBuildingName;
 
-    private static Building testOfficeBuilding, testDwellingBuilding;
+    private static Building testBuilding, testBuilding2;
     private static List<Building> testBuildings;
 
     private FileInputStream fileInputStream;
@@ -38,22 +38,22 @@ public class BuildingUtilsTest {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        testFirstNumberOfFloors=17;
-        testFirstNumberRoomsOnFloor=new int[]
+        testFirstNumberOfFloors = 17;
+        testFirstNumberRoomsOnFloor = new int[]
                 {2, 3, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 2};
-        testFirstBuildingName="testOfficeBuilding";
-        testSecondNumberOfFloors=10;
-        testSecondNumberRoomsOnFloor=new int[]
+        testFirstBuildingName = "testBuilding";
+        testSecondNumberOfFloors = 10;
+        testSecondNumberRoomsOnFloor = new int[]
                 {1, 20, 20, 20, 20, 20, 20, 20, 20, 10};
-        testSecondBuildingName="testDwellingBuilding";
+        testSecondBuildingName = "testBuilding2";
 
-        testOfficeBuilding = new OfficeBuilding(
-                testFirstNumberOfFloors,testFirstNumberRoomsOnFloor,testFirstBuildingName);
-        testDwellingBuilding = new DwellingBuilding(
-                testSecondNumberOfFloors,testSecondNumberRoomsOnFloor,testSecondBuildingName);
+        testBuilding = new OfficeBuilding(
+                testFirstNumberOfFloors, testFirstNumberRoomsOnFloor, testFirstBuildingName);
+        testBuilding2 = new DwellingBuilding(
+                testSecondNumberOfFloors, testSecondNumberRoomsOnFloor, testSecondBuildingName);
         testBuildings = new ArrayList<>();
-        testBuildings.add(testDwellingBuilding);
-        testBuildings.add(testOfficeBuilding);
+        testBuildings.add(testBuilding2);
+        testBuildings.add(testBuilding);
     }
 
     @Before
@@ -66,65 +66,40 @@ public class BuildingUtilsTest {
 
     @Test
     public void testCreateInstance() {
-        Building createdBuilding=BuildingUtils.createInstance(
-                testFirstNumberOfFloors,testFirstNumberRoomsOnFloor,testFirstBuildingName);
-    assertEquals(testOfficeBuilding,createdBuilding);
+        Building createdBuilding = BuildingUtils.createInstance(
+                testFirstNumberOfFloors, testFirstNumberRoomsOnFloor, testFirstBuildingName);
+        assertEquals(testBuilding, createdBuilding);
     }
 
     @Test
-    public void testInputOutputOfficeBuilding() throws Exception {
-        BuildingUtils.outputBuilding(testOfficeBuilding, fileOutputStream);
+    public void testInputOutput() throws Exception {
+        BuildingUtils.outputBuilding(testBuilding, fileOutputStream);
         Building building = BuildingUtils.inputBuilding(fileInputStream);
-        assertEquals(testOfficeBuilding, building);
+        assertEquals(testBuilding, building);
     }
 
     @Test
-    public void testInputOutputDwellingBuilding() throws Exception {
-        BuildingUtils.outputBuilding(testDwellingBuilding, fileOutputStream);
-        Building building = BuildingUtils.inputBuilding(fileInputStream);
-        assertEquals(testDwellingBuilding, building);
-    }
-
-    @Test
-    public void testReadWriteOfficeBuilding() throws Exception {
+    public void testReadWrite() throws Exception {
         try (FileWriter fileWriter = new FileWriter(TEST_FILE_PATH)) {
-            BuildingUtils.writeBuilding(testOfficeBuilding, fileWriter);
+            BuildingUtils.writeBuilding(testBuilding, fileWriter);
         }
         Building building = BuildingUtils.readBuilding(fileReader);
-        assertEquals(testOfficeBuilding, building);
+        assertEquals(testBuilding, building);
     }
 
     @Test
-    public void testReadWriteDwellingBuilding() throws Exception {
+    public void testOverloadedRead() throws Exception {
         try (FileWriter fileWriter = new FileWriter(TEST_FILE_PATH)) {
-            BuildingUtils.writeBuilding(testDwellingBuilding, fileWriter);
-        }
-        Building building = BuildingUtils.readBuilding(fileReader);
-        assertEquals(testDwellingBuilding, building);
-    }
-
-    @Test
-    public void testOverloadedReadOfficeBuilding() throws Exception {
-        try (FileWriter fileWriter = new FileWriter(TEST_FILE_PATH)) {
-            BuildingUtils.writeBuilding(testOfficeBuilding, fileWriter);
+            BuildingUtils.writeBuilding(testBuilding, fileWriter);
         }
         Building building = BuildingUtils.readBuilding(scanner);
-        assertEquals(testOfficeBuilding, building);
-    }
-
-    @Test
-    public void testOverloadedReadDwellingBuilding() throws Exception {
-        try (FileWriter fileWriter = new FileWriter(TEST_FILE_PATH)) {
-            BuildingUtils.writeBuilding(testDwellingBuilding, fileWriter);
-        }
-        Building building = BuildingUtils.readBuilding(scanner);
-        assertEquals(testDwellingBuilding, building);
+        assertEquals(testBuilding, building);
     }
 
     @Test
     @Ignore
     public void testPrintFloorDTOListToFile() throws Exception {
-        List<FloorDTO> listToWrite = testOfficeBuilding.getAllFloors();
+        List<FloorDTO> listToWrite = testBuilding.getAllFloors();
         try (FileWriter fileWriter = new FileWriter(TEST_FILE_PATH)) {
             BuildingUtils.printFloorDTOListToFile(listToWrite, fileWriter);
         }
@@ -141,55 +116,48 @@ public class BuildingUtilsTest {
     }
 
     @Test
-    public void testSerializeDeserializeOfficeBuilding() throws Exception {
-        BuildingUtils.serializeBuilding(testOfficeBuilding, TEST_FILE_PATH);
+    public void testSerializeDeserialize() throws Exception {
+        BuildingUtils.serializeBuilding(testBuilding, TEST_FILE_PATH);
         Building building = BuildingUtils.deserializeBuilding(TEST_FILE_PATH);
-        assertEquals(testOfficeBuilding, building);
-    }
-
-    @Test
-    public void testSerializeDeserializeDwellingBuilding() throws Exception {
-        BuildingUtils.serializeBuilding(testDwellingBuilding, TEST_FILE_PATH);
-        Building building = BuildingUtils.deserializeBuilding(TEST_FILE_PATH);
-        assertEquals(testDwellingBuilding, building);
+        assertEquals(testBuilding, building);
     }
 
     @Test
     public void testSortBuildingsByRoomsTotal() {
         BuildingUtils.sortBuildingsByRoomsTotal(testBuildings);
-        assertEquals(testOfficeBuilding, testBuildings.get(0));
-        assertEquals(testDwellingBuilding, testBuildings.get(1));
+        assertEquals(testBuilding, testBuildings.get(0));
+        assertEquals(testBuilding2, testBuildings.get(1));
     }
 
     @Test
     public void testSortBuildingsByNumberOfFloors() {
         BuildingUtils.sortBuildingsByNumberOfFloors(testBuildings);
-        assertEquals(testDwellingBuilding, testBuildings.get(0));
-        assertEquals(testOfficeBuilding, testBuildings.get(1));
+        assertEquals(testBuilding2, testBuildings.get(0));
+        assertEquals(testBuilding, testBuildings.get(1));
     }
 
     @Test
     public void testSortBuildingsByNameOfBuilding() {
         BuildingUtils.sortBuildingsByNameOfBuilding(testBuildings);
-        assertEquals(testDwellingBuilding, testBuildings.get(0));
-        assertEquals(testOfficeBuilding, testBuildings.get(1));
+        assertEquals(testBuilding, testBuildings.get(0));
+        assertEquals(testBuilding2, testBuildings.get(1));
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testUnmodifiableSetNumberOfFloors() {
-        Building building = BuildingUtils.unmodifiableBuilding(testOfficeBuilding);
+        Building building = BuildingUtils.unmodifiableBuilding(testBuilding);
         building.setNumberOfFloors(5);
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testUnmodifiableSetNumberOfRoomsOnFloor() {
-        Building building = BuildingUtils.unmodifiableBuilding(testOfficeBuilding);
+        Building building = BuildingUtils.unmodifiableBuilding(testBuilding);
         building.setNumberOfRoomsOnFloor(new int[]{1, 2, 3});
     }
 
     @Test(expected = UnsupportedOperationException.class)
     public void testUnmodifiableSetNameOfBuilding() {
-        Building building = BuildingUtils.unmodifiableBuilding(testOfficeBuilding);
+        Building building = BuildingUtils.unmodifiableBuilding(testBuilding);
         building.setNameOfBuilding("test");
     }
 }
