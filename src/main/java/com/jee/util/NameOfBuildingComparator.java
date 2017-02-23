@@ -4,6 +4,7 @@ import com.jee.Building;
 
 import java.util.Comparator;
 
+@Deprecated
 public class NameOfBuildingComparator implements Comparator<Building> {
 
     public int compare(Building o1, Building o2) {

@@ -10,6 +10,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -28,16 +29,15 @@ public class BuildingUtilsTest {
 
     private static Building testBuilding, testBuilding2;
     private static List<Building> testBuildings;
-
+    private final String TEST_FILE_PATH = "src/test/resources/test.txt";
     private FileInputStream fileInputStream;
     private FileOutputStream fileOutputStream;
     private FileReader fileReader;
     private Scanner scanner;
 
-    private final String TEST_FILE_PATH = "src/test/resources/test.txt";
-
     @BeforeClass
-    public static void setUp() throws Exception {
+    public static void setUp() throws Exception
+    {
         testFirstNumberOfFloors = 17;
         testFirstNumberRoomsOnFloor = new int[]
                 {2, 3, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 2};
@@ -57,7 +57,8 @@ public class BuildingUtilsTest {
     }
 
     @Before
-    public void setUpStreams() throws FileNotFoundException {
+    public void setUpStreams() throws FileNotFoundException
+    {
         fileInputStream = new FileInputStream(TEST_FILE_PATH);
         fileOutputStream = new FileOutputStream(TEST_FILE_PATH);
         fileReader = new FileReader(TEST_FILE_PATH);
@@ -65,21 +66,43 @@ public class BuildingUtilsTest {
     }
 
     @Test
-    public void testCreateInstance() {
+    public void testCreateInstance()
+    {
         Building createdBuilding = BuildingUtils.createInstance(
                 testFirstNumberOfFloors, testFirstNumberRoomsOnFloor, testFirstBuildingName);
         assertEquals(testBuilding, createdBuilding);
     }
 
     @Test
-    public void testInputOutput() throws Exception {
+    public void testCreateInstanceByClass() throws InvocationTargetException,
+            NoSuchMethodException, InstantiationException, IllegalAccessException
+    {
+        Building createdBuilding = BuildingUtils.createInstance
+                (testFirstNumberOfFloors,
+                        testFirstNumberRoomsOnFloor, testFirstBuildingName,
+                        OfficeBuilding.class);
+        assertEquals(testBuilding, createdBuilding);
+    }
+
+    @Test
+    public void testInputOutput() throws Exception
+    {
         BuildingUtils.outputBuilding(testBuilding, fileOutputStream);
         Building building = BuildingUtils.inputBuilding(fileInputStream);
         assertEquals(testBuilding, building);
     }
 
     @Test
-    public void testReadWrite() throws Exception {
+    public void testInputOutputByClass() throws Exception
+    {
+        BuildingUtils.outputBuilding(testBuilding, fileOutputStream);
+        Building inputByOfficeBuildingClass = BuildingUtils.inputBuilding(fileInputStream, OfficeBuilding.class);
+        assertEquals(testBuilding,inputByOfficeBuildingClass);
+    }
+
+    @Test
+    public void testReadWrite() throws Exception
+    {
         try (FileWriter fileWriter = new FileWriter(TEST_FILE_PATH)) {
             BuildingUtils.writeBuilding(testBuilding, fileWriter);
         }
@@ -88,7 +111,8 @@ public class BuildingUtilsTest {
     }
 
     @Test
-    public void testOverloadedRead() throws Exception {
+    public void testOverloadedRead() throws Exception
+    {
         try (FileWriter fileWriter = new FileWriter(TEST_FILE_PATH)) {
             BuildingUtils.writeBuilding(testBuilding, fileWriter);
         }
@@ -98,7 +122,8 @@ public class BuildingUtilsTest {
 
     @Test
     @Ignore
-    public void testPrintFloorDTOListToFile() throws Exception {
+    public void testPrintFloorDTOListToFile() throws Exception
+    {
         List<FloorDTO> listToWrite = testBuilding.getAllFloors();
         try (FileWriter fileWriter = new FileWriter(TEST_FILE_PATH)) {
             BuildingUtils.printFloorDTOListToFile(listToWrite, fileWriter);
@@ -116,47 +141,54 @@ public class BuildingUtilsTest {
     }
 
     @Test
-    public void testSerializeDeserialize() throws Exception {
+    public void testSerializeDeserialize() throws Exception
+    {
         BuildingUtils.serializeBuilding(testBuilding, TEST_FILE_PATH);
         Building building = BuildingUtils.deserializeBuilding(TEST_FILE_PATH);
         assertEquals(testBuilding, building);
     }
 
     @Test
-    public void testSortBuildingsByRoomsTotal() {
+    public void testSortBuildingsByRoomsTotal()
+    {
         BuildingUtils.sortBuildingsByRoomsTotal(testBuildings);
         assertEquals(testBuilding, testBuildings.get(0));
         assertEquals(testBuilding2, testBuildings.get(1));
     }
 
     @Test
-    public void testSortBuildingsByNumberOfFloors() {
+    public void testSortBuildingsByNumberOfFloors()
+    {
         BuildingUtils.sortBuildingsByNumberOfFloors(testBuildings);
         assertEquals(testBuilding2, testBuildings.get(0));
         assertEquals(testBuilding, testBuildings.get(1));
     }
 
     @Test
-    public void testSortBuildingsByNameOfBuilding() {
+    public void testSortBuildingsByNameOfBuilding()
+    {
         BuildingUtils.sortBuildingsByNameOfBuilding(testBuildings);
         assertEquals(testBuilding, testBuildings.get(0));
         assertEquals(testBuilding2, testBuildings.get(1));
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void testUnmodifiableSetNumberOfFloors() {
+    public void testUnmodifiableSetNumberOfFloors()
+    {
         Building building = BuildingUtils.unmodifiableBuilding(testBuilding);
         building.setNumberOfFloors(5);
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void testUnmodifiableSetNumberOfRoomsOnFloor() {
+    public void testUnmodifiableSetNumberOfRoomsOnFloor()
+    {
         Building building = BuildingUtils.unmodifiableBuilding(testBuilding);
         building.setNumberOfRoomsOnFloor(new int[]{1, 2, 3});
     }
 
     @Test(expected = UnsupportedOperationException.class)
-    public void testUnmodifiableSetNameOfBuilding() {
+    public void testUnmodifiableSetNameOfBuilding()
+    {
         Building building = BuildingUtils.unmodifiableBuilding(testBuilding);
         building.setNameOfBuilding("test");
     }

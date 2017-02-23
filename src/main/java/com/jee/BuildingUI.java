@@ -13,19 +13,21 @@ import java.util.stream.Collectors;
 
 public class BuildingUI {
 
+    static final String INPUT_FILE_PATH = "src/main/resources/inputFiles/";
+    static final String OUTPUT_FILE_PATH = "src/main/resources/outputFiles/";
     static Scanner sc = new Scanner(System.in);
     static List<Building> buildings = new ArrayList<>();
     static List<Building> officeBuildings = new ArrayList<>();
     static List<Building> dwellingBuildings = new ArrayList<>();
-    static final String INPUT_FILE_PATH = "src/main/resources/inputFiles/";
-    static final String OUTPUT_FILE_PATH = "src/main/resources/outputFiles/";
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         inputUserChoice();
         eventUserChoice();
     }
 
-    public static void inputUserChoice() {
+    public static void inputUserChoice()
+    {
         while (true) {
             System.out.println("________________________________________________");
             System.out.println("1. Input from console");
@@ -56,7 +58,8 @@ public class BuildingUI {
         }
     }
 
-    public static void eventUserChoice() {
+    public static void eventUserChoice()
+    {
         while (true) {
             System.out.println("________________________________________________");
             System.out.println("1. Print all data to the console");
@@ -121,7 +124,8 @@ public class BuildingUI {
         }
     }
 
-    public static void inputDataFromConsole() throws GeneralInputException {
+    public static void inputDataFromConsole() throws GeneralInputException
+    {
         buildings = new ArrayList<>();
         System.out.println("Enter number of buildings: ");
         try {
@@ -136,7 +140,8 @@ public class BuildingUI {
         }
     }
 
-    public static void inputDataFromSymbolStream(String fileName) throws GeneralInputException {
+    public static void inputDataFromSymbolStream(String fileName) throws GeneralInputException
+    {
         try (FileReader fileReader = new FileReader(INPUT_FILE_PATH + fileName)) {
             StreamTokenizer streamTokenizer = new StreamTokenizer(fileReader);
             streamTokenizer.nextToken();
@@ -151,7 +156,8 @@ public class BuildingUI {
         }
     }
 
-    public static void inputDataFromByteStream(String fileName) throws GeneralInputException {
+    public static void inputDataFromByteStream(String fileName) throws GeneralInputException
+    {
         try (FileInputStream fileInputStream = new FileInputStream(INPUT_FILE_PATH + fileName)) {
             int numberOfBuildings = fileInputStream.read();
             for (int i = 0; i < numberOfBuildings; i++) {
@@ -164,11 +170,13 @@ public class BuildingUI {
         }
     }
 
-    public static void printDataToConsole(List<Building> buildings) {
+    public static void printDataToConsole(List<Building> buildings)
+    {
         buildings.stream().forEach((building) -> System.out.println(building.toString()));
     }
 
-    public static void printDataToSymbolStream(List<Building> buildings, String fileName) throws GeneralInputException {
+    public static void printDataToSymbolStream(List<Building> buildings, String fileName) throws GeneralInputException
+    {
         try (FileWriter fileWriter = new FileWriter(OUTPUT_FILE_PATH + fileName)) {
             fileWriter.write(buildings.size() + "\n");
             buildings.stream()
@@ -178,7 +186,8 @@ public class BuildingUI {
         }
     }
 
-    public static void printDataToByteStream(List<Building> buildings, String fileName) throws GeneralInputException {
+    public static void printDataToByteStream(List<Building> buildings, String fileName) throws GeneralInputException
+    {
         try (FileOutputStream fileOutputStream = new FileOutputStream(OUTPUT_FILE_PATH + fileName)) {
             fileOutputStream.write(buildings.size());
             for (Building building : buildings) {
@@ -189,7 +198,8 @@ public class BuildingUI {
         }
     }
 
-    public static void printDtoToFile(List<FloorDTO> floors, String fileName) throws GeneralInputException {
+    public static void printDtoToFile(List<FloorDTO> floors, String fileName) throws GeneralInputException
+    {
         try (FileWriter fileWriter = new FileWriter(OUTPUT_FILE_PATH + fileName)) {
             BuildingUtils.printFloorDTOListToFile(floors, fileWriter);
         } catch (IOException exception) {
@@ -197,7 +207,8 @@ public class BuildingUI {
         }
     }
 
-    public static List<Building> findBuildingsSameByRoomsTotal() {
+    public static List<Building> findBuildingsSameByRoomsTotal()
+    {
         List<Integer> totalRoomsInBuildings = buildings.stream()
                 .map(building -> building.countTotalOfRooms())
                 .collect(Collectors.toList());
@@ -210,7 +221,8 @@ public class BuildingUI {
         return buildingsWithSameTotal;
     }
 
-    public static void separateBuildingsByType() {
+    public static void separateBuildingsByType()
+    {
         officeBuildings = buildings.stream()
                 .filter(building -> building instanceof OfficeBuilding)
                 .collect(Collectors.toList());
@@ -220,13 +232,15 @@ public class BuildingUI {
                 .collect(Collectors.toList());
     }
 
-    public static List<FloorDTO> findFloorsWithMaxRooms() {
+    public static List<FloorDTO> findFloorsWithMaxRooms()
+    {
         return buildings.stream()
                 .map(building -> building.findFloorWithMaxRooms())
                 .collect(Collectors.toList());
     }
 
-    public static List<FloorDTO> findFloorsWithMinRooms() {
+    public static List<FloorDTO> findFloorsWithMinRooms()
+    {
         return buildings.stream()
                 .map(building -> building.findFloorWithMinRooms())
                 .collect(Collectors.toList());
