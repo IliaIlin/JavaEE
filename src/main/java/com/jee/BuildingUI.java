@@ -172,15 +172,14 @@ public class BuildingUI {
 
     public static void printDataToConsole(List<Building> buildings)
     {
-        buildings.stream().forEach((building) -> System.out.println(building.toString()));
+        buildings.forEach(System.out::println);
     }
 
     public static void printDataToSymbolStream(List<Building> buildings, String fileName) throws GeneralInputException
     {
         try (FileWriter fileWriter = new FileWriter(OUTPUT_FILE_PATH + fileName)) {
             fileWriter.write(buildings.size() + "\n");
-            buildings.stream()
-                    .forEach((building) -> BuildingUtils.writeBuilding(building, fileWriter));
+            buildings.forEach((building) -> BuildingUtils.writeBuilding(building, fileWriter));
         } catch (IOException exception) {
             throw new GeneralInputException("Error occured while printing data to the symbol stream. Try again");
         }

@@ -90,7 +90,8 @@ public class DwellingBuilding implements Building {
     public void write(Writer out) {
         Formatter formatter = new Formatter(out);
         formatter.format("%s %d ", nameOfBuilding, numberOfFloors);
-        Arrays.stream(numberOfFlatsOnFloor).forEach(i -> formatter.format("%d ", i));
+        Arrays.stream(numberOfFlatsOnFloor).forEach(i -> formatter.format
+                ("%d ", i));
         formatter.format("\n");
     }
 

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--<!DOCTYPE bookcase SYSTEM "group.dtd">-->
+<bookcase>
+    <bookshelf number="1">
+        <book title="First Book">
+            <intro pages="10"/>
+            <chapter title="First Chapter" pages="25"/>
+            <chapter title="Second Chapter" pages="30"/>
+            <pages>100</pages>
+        </book>
+        <book title="Second Book">
+            <intro pages="8"/>
+            <chapter title="First Chapter" pages="15"/>
+            <chapter title="Second Chapter" pages="23"/>
+        </book>
+    </bookshelf>
+</bookcase>
